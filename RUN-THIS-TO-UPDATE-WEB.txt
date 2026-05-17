@@ -1,0 +1,15 @@
+Simple Python POS Web Admin / Storefront Update
+
+1. Extract the web update zip.
+2. Right-click:
+   Update-SimplePythonPOS-WebSuite.ps1
+3. Choose:
+   Run with PowerShell
+
+What it does:
+- updates the local API
+- updates the web admin
+- updates the storefront
+- restarts the local web services
+
+It keeps the live POS database in %APPDATA%\SimplePythonPOS\data\pos.db.
