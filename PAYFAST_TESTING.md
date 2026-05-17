@@ -11,7 +11,7 @@ PUBLIC_STORE_URL=https://patala-pay-webstore.vercel.app
 After the API is deployed, set:
 
 ```text
-PUBLIC_API_URL=https://your-pos-api.vercel.app
+PUBLIC_API_URL=https://patala-pay-pos-api.vercel.app
 ```
 
 The generated PayFast checkout uses:
@@ -27,7 +27,7 @@ notify_url = PUBLIC_API_URL + "/store/payfast/itn"
 Set these in the POS API Vercel project:
 
 ```text
-PUBLIC_API_URL=https://your-pos-api.vercel.app
+PUBLIC_API_URL=https://patala-pay-pos-api.vercel.app
 PUBLIC_STORE_URL=https://patala-pay-webstore.vercel.app
 SIMPLE_POS_ALLOWED_ORIGINS=https://patala-pay-webstore.vercel.app
 PAYFAST_MODE=sandbox

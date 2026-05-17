@@ -9,7 +9,7 @@ The API can be deployed to Vercel for online PayFast/webstore testing.
 Set these Vercel environment variables:
 
 ```text
-PUBLIC_API_URL=https://your-pos-api.vercel.app
+PUBLIC_API_URL=https://patala-pay-pos-api.vercel.app
 PUBLIC_STORE_URL=https://patala-pay-webstore.vercel.app
 SIMPLE_POS_ALLOWED_ORIGINS=https://patala-pay-webstore.vercel.app
 PAYFAST_MODE=sandbox
