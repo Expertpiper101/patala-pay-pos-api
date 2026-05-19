@@ -6,6 +6,14 @@
       "use": "@vercel/node"
     }
   ],
+  "functions": {
+    "server.js": {
+      "includeFiles": [
+        "node_modules/sql.js/dist/sql-wasm.wasm",
+        "data/pos.db"
+      ]
+    }
+  },
   "routes": [
     {
       "src": "/(.*)",

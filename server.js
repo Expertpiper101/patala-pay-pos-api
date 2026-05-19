@@ -4,9 +4,11 @@ import fs from "node:fs";
 import path from "node:path";
 import crypto from "node:crypto";
 import os from "node:os";
+import { createRequire } from "node:module";
 import { fileURLToPath } from "node:url";
 import initSqlJs from "sql.js";
 
+const require = createRequire(import.meta.url);
 const app = express();
 const PORT = 8090;
 const HOST = "127.0.0.1";
@@ -139,7 +141,14 @@ app.use((req, res, next) => {
   return next();
 });
 
-const SQL = await initSqlJs();
+const SQL = await initSqlJs({
+  locateFile(file) {
+    if (file === "sql-wasm.wasm") {
+      return require.resolve("sql.js/dist/sql-wasm.wasm");
+    }
+    return file;
+  },
+});
 const sessions = new Map();
 const SESSION_TTL_MS = 12 * 60 * 60 * 1000;
 const ALL_PERMISSIONS = ["dashboard", "users", "products", "suppliers", "customers", "sales", "stock", "cashups", "backup"];
