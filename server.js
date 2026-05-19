@@ -58,6 +58,8 @@ const LOCAL_ALLOWED_ORIGINS = new Set([
   "http://localhost:8084",
   "http://127.0.0.1:8090",
   "http://localhost:8090",
+  "https://patala-pay-webstore.vercel.app",
+  "https://patala-pay-webadmin.vercel.app",
   PUBLIC_API_URL,
   PUBLIC_STORE_URL,
   ...EXTRA_ALLOWED_ORIGINS,
