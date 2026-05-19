@@ -46,6 +46,7 @@ const PAYFAST_MERCHANT_ID = String(process.env.PAYFAST_MERCHANT_ID || "").trim()
 const PAYFAST_MERCHANT_KEY = String(process.env.PAYFAST_MERCHANT_KEY || "").trim();
 const PAYFAST_PASSPHRASE = String(process.env.PAYFAST_PASSPHRASE || "").trim();
 const PAYFAST_REQUIRE_SIGNATURE = String(process.env.PAYFAST_REQUIRE_SIGNATURE || "").trim() === "1";
+const AUTH_TOKEN_SECRET = String(process.env.SIMPLE_POS_AUTH_SECRET || "simple-python-pos-vercel-session-secret");
 const PAYFAST_PROCESS_URL = PAYFAST_MODE === "live"
   ? "https://www.payfast.co.za/eng/process"
   : "https://sandbox.payfast.co.za/eng/process";
@@ -153,6 +154,20 @@ const sessions = new Map();
 const SESSION_TTL_MS = 12 * 60 * 60 * 1000;
 const ALL_PERMISSIONS = ["dashboard", "users", "products", "suppliers", "customers", "sales", "stock", "cashups", "backup"];
 const CASHIER_PERMISSIONS = ["dashboard", "sales", "stock", "cashups"];
+
+function base64UrlEncode(value) {
+  return Buffer.from(value, "utf8").toString("base64").replaceAll("+", "-").replaceAll("/", "_").replace(/=+$/g, "");
+}
+
+function base64UrlDecode(value) {
+  const normalized = String(value || "").replaceAll("-", "+").replaceAll("_", "/");
+  const padded = normalized.padEnd(Math.ceil(normalized.length / 4) * 4, "=");
+  return Buffer.from(padded, "base64").toString("utf8");
+}
+
+function signPayload(payload) {
+  return crypto.createHmac("sha256", AUTH_TOKEN_SECRET).update(payload).digest("base64").replaceAll("+", "-").replaceAll("/", "_").replace(/=+$/g, "");
+}
 
 function hashSecret(secret) {
   const salt = crypto.randomBytes(16).toString("hex");
@@ -646,11 +661,17 @@ ensureSchema();
 reconcilePaidOnlineOrderSales();
 
 function createSession(user, type = "staff") {
-  const token = crypto.randomBytes(24).toString("hex");
+  const expiresAt = Date.now() + SESSION_TTL_MS;
+  const payload = base64UrlEncode(JSON.stringify({
+    user,
+    type,
+    expiresAt,
+  }));
+  const token = `${payload}.${signPayload(payload)}`;
   sessions.set(token, {
     user,
     type,
-    expiresAt: Date.now() + SESSION_TTL_MS,
+    expiresAt,
   });
   return token;
 }
@@ -666,9 +687,17 @@ function publicTrial(trial) {
 }
 
 function getSession(token, type = null) {
-  const session = sessions.get(token);
+  let session = sessions.get(token);
   if (!session) {
-    return null;
+    const [payload, signature] = String(token || "").split(".");
+    if (!payload || !signature || signature !== signPayload(payload)) {
+      return null;
+    }
+    try {
+      session = JSON.parse(base64UrlDecode(payload));
+    } catch (_error) {
+      return null;
+    }
   }
   if (session.expiresAt < Date.now()) {
     sessions.delete(token);
