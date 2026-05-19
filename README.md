@@ -11,7 +11,7 @@ Set these Vercel environment variables:
 ```text
 PUBLIC_API_URL=https://patala-pay-pos-api.vercel.app
 PUBLIC_STORE_URL=https://patala-pay-webstore.vercel.app
-SIMPLE_POS_ALLOWED_ORIGINS=https://patala-pay-webstore.vercel.app
+SIMPLE_POS_ALLOWED_ORIGINS=https://patala-pay-webstore.vercel.app,https://patala-pay-webadmin.vercel.app
 PAYFAST_MODE=sandbox
 PAYFAST_MERCHANT_ID=10000100
 PAYFAST_MERCHANT_KEY=46f0cd694581a
